@@ -1,23 +1,44 @@
-import logo from './logo.svg';
 import './App.css';
+import Weather from './Weather';
+import { useState } from 'react';
+
+const api = {
+  key: "050d63aeb0692c8d77ebbfc79948cca3",
+  base: "https://api.openweathermap.org/data/2.5"
+}
 
 function App() {
+  const [city, setCity] = useState("")
+  const [weather, setWeather] = useState({
+    name: "Yerevan",
+    main: {
+      temp: 0,
+    },
+    weather: [
+      {
+        main: 'No data'
+      }
+    ]
+  })
+
+  const searchPressed = () => {
+    fetch(`${api.base}/weather?q=${city}&units=metric&appid=${api.key}`)
+      .then(res => res.json())
+      .then(result => setWeather(result))
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Weather />
+      <input
+        type='text'
+        placeholder='Enter city...'
+        onChange={(e) => setCity(e.target.value)}
+      />
+      <button onClick={searchPressed}>Search</button>
+      <p>{ weather.name }</p>
+      <p>{ weather.main.temp } °C</p>
+      <p>{ weather.weather[0].main }</p>
     </div>
   );
 }
